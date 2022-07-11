@@ -1,0 +1,15 @@
+public class Test {
+    
+    public static void main (String [] args) {
+        
+    }
+    
+    public reverse (int[] a, int i, int j) {
+        int[] temp = new int[a.length];
+        while (i <= j) {
+            temp.add[a[i]];
+            i++;
+        }
+        return temp;
+    }
+}

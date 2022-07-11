@@ -1,0 +1,157 @@
+package week12;
+import java.util.*;
+
+
+public class TwoStackQueue<E> implements Queue<E> {
+    
+    Stack <E> leftStack = new Stack <E> ();
+    Stack <E> rightStack = new Stack <E> ();
+    /**
+     * Return true if and only if this Queue is empty.
+     *
+     * @return true if this Queue is empty, otherwise false.
+     */
+    public boolean isEmpty() {
+        if (rightStack.empty() || leftStack.empty()) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Return the length of this Queue.
+     *
+     * @return the number of items in this Queue.
+     */
+    public int size() {
+        return rightStack.size() + leftStack.size();
+    }
+    /**
+     * Return the item at the front of this Queue.
+     *
+     * @return the item at the front of this Queue.
+     * @throws EmptyQueueException if this Queue is empty.
+     */
+    public E get() {
+        if (rightStack.isEmpty()) {
+            while (leftStack.size() != 0) {
+                rightStack.push(leftStack.pop());
+            }
+            return rightStack.peek();
+        }
+        if (leftStack.isEmpty()) {
+            rightStack.peek();
+        }
+        
+        throw new EmptyQueueException();
+    }
+    /**
+     * Make this Queue empty.
+     */
+    public void clear() {
+        leftStack.clear();
+        rightStack.clear();
+    }
+    
+    /**
+     * Add an item to the rear of this Queue.
+     *
+     * @param item the item to be added to the rear of the Queue.
+     */
+    public void add(E item) {
+        leftStack.push(item);
+        if (!rightStack.isEmpty() && leftStack.isEmpty()) {
+            reverseStack(rightStack);
+        }
+    }
+    
+    /**
+     * Remove and return the front item of this Queue.
+     *
+     * @return the item at the front of this Queue.
+     * @throws EmptyQueueException if this Queue is empty.
+     */
+    public E remove() {
+        // both stacks empty.
+        if (rightStack.isEmpty() && leftStack.isEmpty()) {
+            throw new EmptyQueueException();
+        }
+        // right stack empty.
+        if (rightStack.isEmpty() && !leftStack.isEmpty()) {
+            while (leftStack.size() != 0) {
+                rightStack.push(leftStack.pop());
+            }
+            return rightStack.pop();
+        }
+        // left stack empty.
+        if (!rightStack.isEmpty() && leftStack.isEmpty()) {
+            if (rightStack.size() > 1) {
+                reverseStack(rightStack);
+            }
+            return rightStack.pop();
+        }
+        // neither stack empty.
+        return rightStack.pop();
+    }
+      
+    
+    /**
+     * Return a string representation of this queue ordered from front to back.
+     *
+     * @return a string representation of this Queue.
+     */
+    public String toString() {
+        //no empty stack
+        if (!rightStack.isEmpty() && !leftStack.isEmpty()) {
+            reverseStack(rightStack);
+            String result = rightStack.toString() + leftStack.toString();
+            result = result.replace('[', ' ').trim();
+            result = result.replace(']', ' ').trim();
+            result = result.replace("  ", ", ");
+            result = "[" + result + "]";
+            return result;
+        }
+        // left stack empty
+        if (!rightStack.isEmpty()) {
+            reverseStack(rightStack);
+            return rightStack.toString();
+        }
+        // right stack empty
+        if (!leftStack.isEmpty()) {
+            return leftStack.toString();
+        }
+        return "[]";
+    }
+    
+    public String debug() {
+        return leftStack.toString() + rightStack.toString();
+    }
+       
+    public void reverseStack() {
+        E curr = rightStack.pop();
+        if (rightStack.size() != 1) {
+            reverseStack();
+        } else {
+            placeCurrAtBottomOfStack (rightStack, curr);
+        }
+    }
+        
+    
+    public void reverseStack(Stack<E> s) {
+        E curr = s.pop();
+        if (s.size() != 1) {
+            reverseStack (s);
+        }
+        placeCurrAtBottomOfStack (s, curr);
+    }
+ 
+    public void placeCurrAtBottomOfStack(Stack <E> s, E curr) {
+        E top = s.pop();
+        if (s.size() == 0) {
+            s.push(curr);
+        } else {
+            placeCurrAtBottomOfStack(s, curr);
+        }
+        s.push(top);
+    }
+}
